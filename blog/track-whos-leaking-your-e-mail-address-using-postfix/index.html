@@ -2,7 +2,6 @@
 <html lang="en-US">
 
 <head>
-	<meta name="generator" content="Hugo 0.92.0" />
 <meta charset="utf-8">
 <meta name="HandheldFriendly" content="True">
 <meta name="MobileOptimized" content="320">
@@ -16,22 +15,22 @@
 <meta property="og:site_name" content="zuBu&#39;s homepage" />
 <meta property="og:locale" content="en-US" />
 <meta property="og:type" content="article" />
-<meta property="og:url" content="https://zubux.github.io/" />
-<meta property="og:title" content="zuBu&#39;s homepage" />
-<meta property="twitter:title" content="zuBu&#39;s homepage">
+<meta property="og:url" content="https://zubux.github.io/blog/track-whos-leaking-your-e-mail-address-using-postfix/" />
+<meta property="og:title" content="Track who&#39;s leaking your e-mail address using Postfix" />
+<meta property="twitter:title" content="Track who&#39;s leaking your e-mail address using Postfix">
 
     <meta property="twitter:card" content="summary">
 
-<meta property="og:description" content="zuBu&#39;s little personal space on the web">
-<meta property="twitter:description" content="zuBu&#39;s little personal space on the web">
+<meta property="og:description" content="">
+<meta property="twitter:description" content="">
 
 <title>
 
 
-    zuBu&#39;s homepage
+     zuBu&#39;s homepage - Track who&#39;s leaking your e-mail address using Postfix 
 
 </title>
-<link rel="canonical" href="https://zubux.github.io/">
+<link rel="canonical" href="https://zubux.github.io/blog/track-whos-leaking-your-e-mail-address-using-postfix/">
 
 
 <style media="screen">
@@ -986,8 +985,6 @@ margin-left: -4%;
 
 
 
-  <link href="https://zubux.github.io/index.xml" rel="alternate" type="application/rss+xml" title="zuBu&#39;s homepage" />
-
 
 </head>
 
@@ -995,7 +992,7 @@ margin-left: -4%;
 <body>
 
 
-<div class="header header-home column">
+<div class="header column">
 
     <div class="container">
         
@@ -1028,20 +1025,80 @@ margin-left: -4%;
     </div>
 </div>
 
-<div class="main column">
+
+
+
+
+<div class="main post non-narrow zero-top-spacing column">
     <div class="container">
         <div class="content">
-            
+            <div class="front-matter">
+                <div class="title-container">
+                    <div class="page-heading">
 
-            
+    
+    Track who&#39;s leaking your e-mail address using Postfix
+    
 
-            <div class="best-posts">
-            
-            
+</div>
+
+                </div>
+                <div class="meta">
+                    <div class="date" title="Mon Nov 16 2015 16:03:15 UTC">Nov 16, 2015</div>
+                    
+                        
+                    
+                    
+                    <div class="reading-time middot">2 minute read</div>
+                    
+                    
+                      <div class="tags">
+                    
+                        <ul>
+                          
+                        </ul>
+                    </div>
+                    <div class="tags">
+                        <ul>
+                          
+                          
+                        </ul>
+                    </div>
+                </div>
             </div>
+            <div class="markdown">
+                
+    
+    <p>Curious about who is selling your e-mail address to spammers?</p>
+<p>Most of us prefer to keep our material world contact information private. We usually share our phone number or home address with people we trust. However, in order to use most web services we are required to provide an e-mail address. Meanwhile the trustworthiness of a service is determined long after it gets hold of this info.</p>
+<p>Surprisingly, e-mail addresses are a precious commodity. They are bought and sold everyday. They get leaked due to poor website design or dumped from hacked websites, along with the rest of your personal information. Is there a way to determine who leaked/sold your address? Considering the fact that we use the same e-mail address again and again, this can be nearly impossible unless you have a unique address for every single account you register (and spammers are aware of tricks like this). This is one of the many perks in hosting your own mail server.</p>
+<p>Consider the following senario. You own <code>ihatespam.com</code> and <code>mail.ihatespam.com</code> MX record points to your Postfix mail server. Your precious personal e-mail address is <code>johndoe@ihatespam.com</code> but you don&rsquo;t want to give it away to every website you visit. Furthermore, you would like to know who is responsible for all the spam you receive.</p>
+<p>You can achieve this by using unique non-existent e-mail addresses and redirect every e-mail you receive to those non-existent addresses to your inbox. Just add the following to ``/etc/postfix/main.cf`:</p>
+<pre tabindex="0"><code>luser_relay = johndoe   #Use your username/mail account here
+local_recipient_maps =
+</code></pre><p>and reload your Postfix configuration</p>
+<p><code>service postfix reload</code></p>
+<p>The above configuration creates a catch-all destination for unknown recipients, instead of returning messages as undeliverable, which is the default behavior.</p>
+<p>Now you can use unique e-mail addresses (e.x <em><a href="mailto:john_lnkdn@ihatespam.com">john_lnkdn@ihatespam.com</a></em>, <em><a href="mailto:john_fcbk@ihatespam.com">john_fcbk@ihatespam.com</a></em>, <em><a href="mailto:john_twitr@ihatespam.com">john_twitr@ihatespam.com</a></em>) to track any shady use of your personal information without having to manage multiple inboxes.</p>
+
+
+            </div>
+            
+            
+            
+
+            
+            
+
+            
+
+            
         </div>
     </div>
 </div>
+
+
+
 <div class="footer column">
     <div class="container">
 

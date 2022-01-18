@@ -2,7 +2,6 @@
 <html lang="en-US">
 
 <head>
-	<meta name="generator" content="Hugo 0.92.0" />
 <meta charset="utf-8">
 <meta name="HandheldFriendly" content="True">
 <meta name="MobileOptimized" content="320">
@@ -16,22 +15,22 @@
 <meta property="og:site_name" content="zuBu&#39;s homepage" />
 <meta property="og:locale" content="en-US" />
 <meta property="og:type" content="article" />
-<meta property="og:url" content="https://zubux.github.io/" />
-<meta property="og:title" content="zuBu&#39;s homepage" />
-<meta property="twitter:title" content="zuBu&#39;s homepage">
+<meta property="og:url" content="https://zubux.github.io/blog/fuzzing-automation-with-afl-and-jenkins/" />
+<meta property="og:title" content="Fuzzing automation with AFL and Jenkins" />
+<meta property="twitter:title" content="Fuzzing automation with AFL and Jenkins">
 
     <meta property="twitter:card" content="summary">
 
-<meta property="og:description" content="zuBu&#39;s little personal space on the web">
-<meta property="twitter:description" content="zuBu&#39;s little personal space on the web">
+<meta property="og:description" content="">
+<meta property="twitter:description" content="">
 
 <title>
 
 
-    zuBu&#39;s homepage
+     zuBu&#39;s homepage - Fuzzing automation with AFL and Jenkins 
 
 </title>
-<link rel="canonical" href="https://zubux.github.io/">
+<link rel="canonical" href="https://zubux.github.io/blog/fuzzing-automation-with-afl-and-jenkins/">
 
 
 <style media="screen">
@@ -986,8 +985,6 @@ margin-left: -4%;
 
 
 
-  <link href="https://zubux.github.io/index.xml" rel="alternate" type="application/rss+xml" title="zuBu&#39;s homepage" />
-
 
 </head>
 
@@ -995,7 +992,7 @@ margin-left: -4%;
 <body>
 
 
-<div class="header header-home column">
+<div class="header column">
 
     <div class="container">
         
@@ -1028,20 +1025,111 @@ margin-left: -4%;
     </div>
 </div>
 
-<div class="main column">
+
+
+
+
+<div class="main post non-narrow zero-top-spacing column">
     <div class="container">
         <div class="content">
-            
+            <div class="front-matter">
+                <div class="title-container">
+                    <div class="page-heading">
 
-            
+    
+    Fuzzing automation with AFL and Jenkins
+    
 
-            <div class="best-posts">
-            
-            
+</div>
+
+                </div>
+                <div class="meta">
+                    <div class="date" title="Wed Jan 13 2016 17:21:05 UTC">Jan 13, 2016</div>
+                    
+                        
+                    
+                    
+                    <div class="reading-time middot">4 minute read</div>
+                    
+                    
+                      <div class="tags">
+                    
+                        <ul>
+                          
+                        </ul>
+                    </div>
+                    <div class="tags">
+                        <ul>
+                          
+                          
+                        </ul>
+                    </div>
+                </div>
             </div>
+            <div class="markdown">
+                
+    
+    <h1 id="introduction">Introduction</h1>
+<p>Fuzzing is a very effective testing technique for discovering software bugs. The basic principle is simple. Feed your program with mutated/random data, watch how it reacts. Security researchers spend countless hours creating fuzzers, trimming test cases and fuzzing interesting programs, for fun and profit. Fuzz testing is also considered an important part of every Secure Development Lifecycle (SDLC) and should be performed on a regular basis. Is it though? Considering the modern Continuous Delivery environment and the time needed for preparing and running a successful fuzzing test suite, this type of testing is often left as a permanent entry in the team&rsquo;s backlog or ends up as a one-time test.</p>
+<p>Fortunately, the arsenal of fuzzing tools has increased over the past few years and their usability keeps getting better and better. A great example of this progress is the <a href="http://lcamtuf.coredump.cx/afl/">American Fuzz Lop</a> (AFL) fuzzer created by Michał Zalewski.</p>
+<p>However, no matter how easy-to-learn a tool is, sometimes it&rsquo;s all about integrating it into an existing workflow. This tutorial explains how to easily prepare fuzzing jobs in Jenkins using AFL with a little help from Docker.</p>
+<h1 id="choosing-the-right-jenkins-plugin">Choosing the right Jenkins plugin</h1>
+<p>Although there are numerous Jenkins plugins for Docker integration I decided to go with <a href="https://wiki.jenkins-ci.org/display/JENKINS/CloudBees+Docker+Custom+Build+Environment+Plugin">CloudBees Docker Custom Build Environment Plugin</a>. The reasons where:</p>
+<ol>
+<li>
+<p>Compared to <a href="https://wiki.jenkins-ci.org/display/JENKINS/Docker+Plugin">docker-plugin</a>, Cloudbees' plugin follows a more strict Docker workflow. Devs should not get used to SSH connect to their containers and juggle between sudo-enabled users even in development environments.</p>
+</li>
+<li>
+<p><a href="https://wiki.jenkins-ci.org/display/JENKINS/Docker+build+step+plugin">Docker build step</a> could have been another option but it lacked some essential features like unix sockets and volume support.</p>
+</li>
+</ol>
+<p>So, before proceeding make sure you have CloudBees Docker Custom Build Environment Plugin installed.</p>
+<h2 id="preparing-your-docker-image">Preparing your Docker image</h2>
+<p>In order to make things simple I created an Ubuntu-based Docker image which has AFL pre-installed in <code>/usr</code> and all essential environmental variables set (e.g. CXX,CC, AFL_HARDEN) You can find the image <a href="https://hub.docker.com/r/zubu/afl-slave/">here</a> and the Dockerfile <a href="https://github.com/zuBux/afl-slave">here</a>.</p>
+<p>For the purposes of this tutorial I am going to use the lha compression utility as an example fuzzing target.</p>
+<p>Open Jenkins homepage in your browser and select &ldquo;<strong>New Item</strong>&rdquo; and &ldquo;<strong>Freestyle project</strong>&rdquo; option. Name your Item something like lha-fuzz to distinguish it from a normal build (supposing you &rsquo;re a member of the development team ) Select your prefered Source Code Management software, in our case it&rsquo;s Git. Specify a sub-folder for checkout, because you&rsquo;ll need a consistent way to refer to the repository from the Dockerfile.</p>
+<p><img src="https://zubux.github.io/img/git_configuration.png" alt=""></p>
+<p>Now you &rsquo;ll need to create a Dockerfile to define your build environment. Since the afl-slave image takes care of everything AFL-related, you only need to specify the dependencies and steps to build your source code. In this case, the Dockerfile will look like this:</p>
+<pre tabindex="0"><code>FROM zubu/afl-slave
+
+# Copy lha code and build it
+WORKDIR /lha
+RUN aclocal
+RUN autoheader
+RUN automake -a
+RUN autoconf
+RUN ./configure &amp;&amp; make &amp;&amp; make clean all
+
+# Command to see check that everything's working
+CMD [&quot;afl-fuzz&quot;,&quot;-i&quot;,&quot;/testcases&quot;,&quot;-o&quot;,&quot;/tmp/output&quot;,&quot;/lha/src/lha&quot;,&quot;x&quot;,&quot;@@&quot;,&quot;-w /tmp&quot;]
+</code></pre><p>Place the Dockerfile in your workspace, in Debian-based distributions that&rsquo;s <code>/var/lib/jenkins/workspace/&lt;item name&gt;</code>. Select &ldquo;<strong>Build inside a Docker container</strong>&rdquo;. Add two volumes, one for your test cases and one for AFL output. Place the Dockerfile inside your project&rsquo;s workspace and specify the path in &ldquo;path to docker context&rdquo; field.</p>
+<p><img src="https://zubux.github.io/img/docker_volumes.png" alt=""></p>
+<h1 id="running-your-fuzzing-job">Running your fuzzing job</h1>
+<p>For demo purposes let&rsquo;s fuzz the <code>lha</code> executable. Select &ldquo;<strong>Add Build Step</strong>&rdquo; and choose &ldquo;<strong>Execute Shell</strong>&rdquo;. Add the following:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">afl-fuzz -i /testcases -o /output/$BUILD_NUMBER /lha/src/lha x @@ -w /tmp
+</code></pre></div><p>Don&rsquo;t forget to run <code>echo core &gt;/proc/sys/kernel/core_pattern</code> in your Docker host before starting the container. For more information regarding the AFL fuzzer you can visit the official <a href="http://lcamtuf.coredump.cx/afl/README.txt">README</a>.</p>
+<p>Save your job and click &ldquo;<strong>Build Now</strong>&rdquo;.</p>
+<h2 id="future-work">Future Work</h2>
+<p>The process of evaluating your fuzz test results can be quite painful. Since I&rsquo;m looking into ways of automating the whole process, I plan to add Ben Nagy&rsquo;s <a href="https://github.com/bnagy/crashwalk">crashwalk</a> in the afl-slave image. Crashwalk automatically performs bug triage and produces readable (and/or parsable) reports for each crashing test case. I was planning on including it in this tutorial but unfortunately GDB does not always play well with containers. <strong>Stay tuned for Part 2!</strong></p>
+
+
+            </div>
+            
+            
+            
+
+            
+            
+
+            
+
+            
         </div>
     </div>
 </div>
+
+
+
 <div class="footer column">
     <div class="container">
 

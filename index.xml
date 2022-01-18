@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>zuBu&#39;s homepage</title>
+    <link>https://zubux.github.io/</link>
+    <description>Recent content on zuBu&#39;s homepage</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-US</language>
+    <lastBuildDate>Mon, 15 Feb 2016 17:03:05 +0000</lastBuildDate><atom:link href="https://zubux.github.io/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>research</title>
+      <link>https://zubux.github.io/research/</link>
+      <pubDate>Sun, 12 Feb 2017 16:40:59 +0000</pubDate>
+      
+      <guid>https://zubux.github.io/research/</guid>
+      <description>Until I decide to create a dedicated page for my research publications and interests, here is a list of external links:
+Advisories  CVE-2016-1925 – Buffer overflow in LHA for UNIX compression utility CVE-2015-5520 – Orchard Persistent XSS Vulnerability CVE-2014-9639 – Integer overflow in vorbis-tools CVE-2014-9638 – Division by zero in vorbis-tools CVE-2014-9330 – Libtiff integer overflow in bmp2tiff CVE-2014-8493 – ZTE ZXHN H108L Authentication Bypass (PoC)  </description>
+    </item>
+    
+    <item>
+      <title>about</title>
+      <link>https://zubux.github.io/about/</link>
+      <pubDate>Sun, 12 Feb 2017 16:39:44 +0000</pubDate>
+      
+      <guid>https://zubux.github.io/about/</guid>
+      <description>Hi,
+I&amp;rsquo;m Paris, recovering pentester and InfoSec enthusiast. I like breaking things and figuring out ways to help people make them better. Breaking mostly happens with Python, building with Go. Lately I find myself interested in exotic things like functional programming.
+On my spare computer time I hunt for bugs in open source projects, build security related tools and try to figure out whether a tech apocalypse is inevitable. When the weather is good I try to be on my bicycle.</description>
+    </item>
+    
+    <item>
+      <title>Actionable security requirements using BDD</title>
+      <link>https://zubux.github.io/blog/actionable-security-requirements-using-bdd/</link>
+      <pubDate>Mon, 15 Feb 2016 17:03:05 +0000</pubDate>
+      
+      <guid>https://zubux.github.io/blog/actionable-security-requirements-using-bdd/</guid>
+      <description>Short intro to BDD Checklists are useful for many security-related tasks. Whether we &amp;rsquo;re threat modeling, code reviewing or pentesting an application, at some point we all feel an urge to tick off some check boxes. Checklists are also a very compact way to communicate security requirements. However sometimes we take for granted that these requirements are understandable by all involved parties. This assumption may result to dialogues like the following:</description>
+    </item>
+    
+    <item>
+      <title>Fuzzing automation with AFL and Jenkins</title>
+      <link>https://zubux.github.io/blog/fuzzing-automation-with-afl-and-jenkins/</link>
+      <pubDate>Wed, 13 Jan 2016 17:21:05 +0000</pubDate>
+      
+      <guid>https://zubux.github.io/blog/fuzzing-automation-with-afl-and-jenkins/</guid>
+      <description>Introduction Fuzzing is a very effective testing technique for discovering software bugs. The basic principle is simple. Feed your program with mutated/random data, watch how it reacts. Security researchers spend countless hours creating fuzzers, trimming test cases and fuzzing interesting programs, for fun and profit. Fuzz testing is also considered an important part of every Secure Development Lifecycle (SDLC) and should be performed on a regular basis. Is it though? Considering the modern Continuous Delivery environment and the time needed for preparing and running a successful fuzzing test suite, this type of testing is often left as a permanent entry in the team&amp;rsquo;s backlog or ends up as a one-time test.</description>
+    </item>
+    
+    <item>
+      <title>Bottle Security Checklist</title>
+      <link>https://zubux.github.io/blog/bottle-security-checklist/</link>
+      <pubDate>Fri, 18 Dec 2015 16:47:16 +0000</pubDate>
+      
+      <guid>https://zubux.github.io/blog/bottle-security-checklist/</guid>
+      <description>Bottle is a micro web-framework for Python, strongly resembling Flask. I was attracted by its even greater simplicity (no dependencies!) and I gave it a try in a few projects (e.x spamcan). Although Bottle&amp;rsquo;s documentation is very helpful, I noticed that it lacks detail in secure best practices.
+Since micro-frameworks equal to small learning curves and small learning curves usually result to fast-paced development, I compiled a security checklist, covering the basics, that can be used as a reference when developing Bottle-based applications.</description>
+    </item>
+    
+    <item>
+      <title>Track who&#39;s leaking your e-mail address using Postfix</title>
+      <link>https://zubux.github.io/blog/track-whos-leaking-your-e-mail-address-using-postfix/</link>
+      <pubDate>Mon, 16 Nov 2015 16:03:15 +0000</pubDate>
+      
+      <guid>https://zubux.github.io/blog/track-whos-leaking-your-e-mail-address-using-postfix/</guid>
+      <description>Curious about who is selling your e-mail address to spammers?
+Most of us prefer to keep our material world contact information private. We usually share our phone number or home address with people we trust. However, in order to use most web services we are required to provide an e-mail address. Meanwhile the trustworthiness of a service is determined long after it gets hold of this info.
+Surprisingly, e-mail addresses are a precious commodity.</description>
+    </item>
+    
+  </channel>
+</rss>

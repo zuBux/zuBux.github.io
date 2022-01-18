@@ -2,7 +2,6 @@
 <html lang="en-US">
 
 <head>
-	<meta name="generator" content="Hugo 0.92.0" />
 <meta charset="utf-8">
 <meta name="HandheldFriendly" content="True">
 <meta name="MobileOptimized" content="320">
@@ -16,22 +15,22 @@
 <meta property="og:site_name" content="zuBu&#39;s homepage" />
 <meta property="og:locale" content="en-US" />
 <meta property="og:type" content="article" />
-<meta property="og:url" content="https://zubux.github.io/" />
-<meta property="og:title" content="zuBu&#39;s homepage" />
-<meta property="twitter:title" content="zuBu&#39;s homepage">
+<meta property="og:url" content="https://zubux.github.io/blog/actionable-security-requirements-using-bdd/" />
+<meta property="og:title" content="Actionable security requirements using BDD" />
+<meta property="twitter:title" content="Actionable security requirements using BDD">
 
     <meta property="twitter:card" content="summary">
 
-<meta property="og:description" content="zuBu&#39;s little personal space on the web">
-<meta property="twitter:description" content="zuBu&#39;s little personal space on the web">
+<meta property="og:description" content="">
+<meta property="twitter:description" content="">
 
 <title>
 
 
-    zuBu&#39;s homepage
+     zuBu&#39;s homepage - Actionable security requirements using BDD 
 
 </title>
-<link rel="canonical" href="https://zubux.github.io/">
+<link rel="canonical" href="https://zubux.github.io/blog/actionable-security-requirements-using-bdd/">
 
 
 <style media="screen">
@@ -986,8 +985,6 @@ margin-left: -4%;
 
 
 
-  <link href="https://zubux.github.io/index.xml" rel="alternate" type="application/rss+xml" title="zuBu&#39;s homepage" />
-
 
 </head>
 
@@ -995,7 +992,7 @@ margin-left: -4%;
 <body>
 
 
-<div class="header header-home column">
+<div class="header column">
 
     <div class="container">
         
@@ -1028,20 +1025,199 @@ margin-left: -4%;
     </div>
 </div>
 
-<div class="main column">
+
+
+
+
+<div class="main post non-narrow zero-top-spacing column">
     <div class="container">
         <div class="content">
-            
+            <div class="front-matter">
+                <div class="title-container">
+                    <div class="page-heading">
 
-            
+    
+    Actionable security requirements using BDD
+    
 
-            <div class="best-posts">
-            
-            
+</div>
+
+                </div>
+                <div class="meta">
+                    <div class="date" title="Mon Feb 15 2016 17:03:05 UTC">Feb 15, 2016</div>
+                    
+                        
+                    
+                    
+                    <div class="reading-time middot">5 minute read</div>
+                    
+                    
+                      <div class="tags">
+                    
+                        <ul>
+                          
+                        </ul>
+                    </div>
+                    <div class="tags">
+                        <ul>
+                          
+                          
+                        </ul>
+                    </div>
+                </div>
             </div>
+            <div class="markdown">
+                
+    
+    <h1 id="short-intro-to-bdd">Short intro to BDD</h1>
+<p>Checklists are useful for many security-related tasks. Whether we &rsquo;re threat modeling, code reviewing or pentesting an application, at some point we all feel an urge to tick off some check boxes. Checklists are also a very compact way to communicate security requirements. However sometimes we take for granted that these requirements are understandable by all involved parties. This assumption may result to dialogues like the following:</p>
+<blockquote>
+<p>-Hey, you mention here that our app is vulnerable to session fixation.</p>
+</blockquote>
+<blockquote>
+<p>-That&rsquo;s correct.</p>
+</blockquote>
+<blockquote>
+<p>-OK&hellip;What&rsquo;s that?</p>
+</blockquote>
+<p>If complexity is the enemy of security, then <strong>visibility is security&rsquo;s most trusted ally</strong>. When every team member, whether they &rsquo;re security engineers, developers, testers, understands security specifications through a common vocabulary, chances of a bug slipping into production will get slimmer. <strong>This is where Behavior-Driven Development, or BDD, comes in.</strong></p>
+<p>In simple words, BDD is a process of verifying a product&rsquo;s behaviour using User Stories (for a more detailed, description see <a href="http://guide.agilealliance.org/guide/bdd.html">here</a>. For example, in order to clarify Session Fixation in the previous dialogue, we can use the following BDD scenario:</p>
+<pre tabindex="0"><code>Scenario: Session Fixation
+    Given a new browser instance
+    And user testuser1 is logged in with password test1234
+    When user logs out
+    And user testuser1 logs in with password test1234
+    Then session tokens should be different
+</code></pre><p>What&rsquo;s not to understand, right? Using the <a href="https://cucumber.io/docs/reference#gherkin">Gherkin</a> language, every scenario can be expressed using the Given, When, Then structure, which the author uses to describe the product&rsquo;s desired behaviour. Each sentence is called a Step (e.g user %s logs in) which is mapped to the actual testing code.</p>
+<p>Each scenario belongs to a Feature which is actually a <a href="https://en.wikipedia.org/wiki/User_story">user story</a>. A Feature will usually contain multiple scenarios.</p>
+<h1 id="using-aloe-to-prevent-burns">Using Aloe to prevent burns</h1>
+<p>Currently, the dominant frameworks for Behavior-Driven Development are <a href="https://cucumber.io/">Cucumber</a> (Ruby) and <a href="http://jbehave.org/">JBehave</a> (Java). The idea of utilising BDD specifically for security testing has been around for sometime also, with <a href="http://www.continuumsecurity.net/bdd-intro.html">BDD-Security</a>, <a href="http://gauntlt.org/">Gauntlt</a> and <a href="https://github.com/F-Secure/mittn">mittn</a> being the prime examples. Since Python is my weapon of choice, I decided to try out <a href="http://aloe.readthedocs.org/en/latest/#">Aloe</a>, a rather new but promising Python BDD framework originating from <a href="http://lettuce.it/intro/overview.html">lettuce</a>.</p>
+<p>Let&rsquo;s start by installing aloe:</p>
+<pre tabindex="0"><code>pip install aloe
+</code></pre><p>Create a directory for your project&rsquo;s tests (e.g. mywebapp) and place inside a directory named <code>features</code>, which will contain the following files:</p>
+<ul>
+<li><code>steps.py</code> - Step definitions for our Features</li>
+<li><code>session_management.feature</code> - The Feature we will be running</li>
+<li><code>__init__.py</code> - Directories containing Features must contain packages (see <a href="http://aloe.readthedocs.org/en/latest/features.html#feature-loading">here</a>)</li>
+</ul>
+<p><code>session_management.feature</code> will define all our requirements for secure session management through multiple scenarios. Since this is an introductory tutorial I will implement only a few. A secure session management User Story can be described as:</p>
+<pre tabindex="0"><code>Feature: Session Management
+
+        As a user
+        I want my session to be securely managed
+        So that a malicious user cannot impersonate me
+</code></pre><p>followed by all relevant scenarios.</p>
+<h1 id="writing-steps">Writing Steps</h1>
+<p>BDD steps should describe the desired behaviour of your software in a way that everyone can understand, <strong>so try to avoid gory implementation details as much as possible</strong>. Borrowing an <a href="http://aloe.readthedocs.org/en/latest/steps.html#writing-good-bdd-steps">example</a> from the official documentation, you should prefer this :</p>
+<p><code>When user testuser1 logs in with password test1234</code></p>
+<p>over this:</p>
+<pre tabindex="0"><code>When I fill in username with &quot;testuser&quot;
+And I fill in password with &quot;test1234&quot;
+And I press &quot;Log on&quot;
+And I wait for title to contain &quot;Landing Page&quot;
+</code></pre><p>Back to our requirement, since we &rsquo;re testing a web app, a web browser automation framework such as <a href="seleniumhq.org">Selenium</a> is essential for verifying that the app is behaving in the desired way. Here&rsquo;s the implementation of our steps:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python" data-lang="python"><span style="color:#f92672">from</span> aloe <span style="color:#f92672">import</span> world, step, before, after
+<span style="color:#f92672">from</span> selenium <span style="color:#f92672">import</span> webdriver
+<span style="color:#f92672">from</span> selenium.webdriver.support.ui <span style="color:#f92672">import</span> WebDriverWait
+<span style="color:#f92672">from</span> selenium.webdriver.support <span style="color:#f92672">import</span> expected_conditions <span style="color:#66d9ef">as</span> EC
+
+
+URL <span style="color:#f92672">=</span> <span style="color:#e6db74">&#39;http://myinsecureapp.com&#39;</span>
+
+
+<span style="color:#a6e22e">@step</span>
+<span style="color:#66d9ef">def</span> <span style="color:#a6e22e">compare_tokens</span>(self):
+    <span style="color:#e6db74">&#39;&#39;&#39;session tokens should be different&#39;&#39;&#39;</span>
+    <span style="color:#66d9ef">try</span>:
+        <span style="color:#66d9ef">assert</span> world<span style="color:#f92672">.</span>session_tokens[<span style="color:#ae81ff">0</span>] <span style="color:#f92672">!=</span> world<span style="color:#f92672">.</span>session_tokens[<span style="color:#ae81ff">1</span>]
+    <span style="color:#66d9ef">except</span> <span style="color:#a6e22e">IndexError</span>:
+        print <span style="color:#e6db74">&#34;Not enough session tokens to compare.&#34;</span>
+
+
+<span style="color:#a6e22e">@step</span>
+<span style="color:#66d9ef">def</span> <span style="color:#a6e22e">user_login</span>(self, user, password):
+    <span style="color:#e6db74">&#39;&#39;&#39;user (\w+) with password (\w+) is logged in&#39;&#39;&#39;</span>
+    world<span style="color:#f92672">.</span>browser<span style="color:#f92672">.</span>get(URL)
+    username_field <span style="color:#f92672">=</span> world<span style="color:#f92672">.</span>browser<span style="color:#f92672">.</span>find_element_by_name(<span style="color:#e6db74">&#39;Email&#39;</span>)
+    username_field<span style="color:#f92672">.</span>send_keys(user)
+    pass_field <span style="color:#f92672">=</span> world<span style="color:#f92672">.</span>browser<span style="color:#f92672">.</span>find_element_by_name(<span style="color:#e6db74">&#39;Password&#39;</span>)
+    pass_field<span style="color:#f92672">.</span>send_keys(password)
+    world<span style="color:#f92672">.</span>browser<span style="color:#f92672">.</span>find_element_by_id(<span style="color:#e6db74">&#39;submit-btn&#39;</span>)<span style="color:#f92672">.</span>click()
+    <span style="color:#66d9ef">try</span>:
+        WebDriverWait(world<span style="color:#f92672">.</span>browser, <span style="color:#ae81ff">30</span>)<span style="color:#f92672">.</span>until(EC<span style="color:#f92672">.</span>title_contains(<span style="color:#e6db74">&#34;Landing Page&#34;</span>))
+    <span style="color:#66d9ef">except</span>:
+        print <span style="color:#e6db74">&#34;Unable to login&#34;</span>
+
+    self<span style="color:#f92672">.</span>then(<span style="color:#e6db74">&#39;the value of the session token is saved&#39;</span>)
+
+
+<span style="color:#a6e22e">@step</span>
+<span style="color:#66d9ef">def</span> <span style="color:#a6e22e">user_login_2</span>(self, user, password):
+    <span style="color:#e6db74">&#39;&#39;&#39; user (\w+) logs in with password (\w+)&#39;&#39;&#39;</span>
+    self<span style="color:#f92672">.</span>behave_as(<span style="color:#e6db74">&#34;Given user </span><span style="color:#e6db74">{}</span><span style="color:#e6db74"> with password </span><span style="color:#e6db74">{}</span><span style="color:#e6db74"> is logged in&#34;</span><span style="color:#f92672">.</span>format(user, password))
+
+
+<span style="color:#a6e22e">@step</span>
+<span style="color:#66d9ef">def</span> <span style="color:#a6e22e">user_logout</span>(self):
+    <span style="color:#e6db74">&#39;&#39;&#39;user logs out&#39;&#39;&#39;</span>
+    world<span style="color:#f92672">.</span>browser<span style="color:#f92672">.</span>execute_script(<span style="color:#e6db74">&#34;return LogMeout();&#34;</span>)
+
+
+<span style="color:#a6e22e">@step</span>
+<span style="color:#66d9ef">def</span> <span style="color:#a6e22e">new_browser_instance</span>(self):
+    <span style="color:#e6db74">&#39;&#39;&#39;a new browser instance&#39;&#39;&#39;</span>
+    world<span style="color:#f92672">.</span>browser <span style="color:#f92672">=</span> webdriver<span style="color:#f92672">.</span>Firefox()
+
+
+<span style="color:#a6e22e">@step</span>
+<span style="color:#66d9ef">def</span> <span style="color:#a6e22e">store_session_token</span>(self):
+    <span style="color:#e6db74">&#39;&#39;&#39;the value of the session token is saved&#39;&#39;&#39;</span>
+    <span style="color:#66d9ef">for</span> cookie <span style="color:#f92672">in</span> world<span style="color:#f92672">.</span>browser<span style="color:#f92672">.</span>get_cookies():
+        <span style="color:#66d9ef">if</span> cookie[<span style="color:#e6db74">&#39;name&#39;</span>] <span style="color:#f92672">==</span> <span style="color:#e6db74">&#39;PHPSESSID&#39;</span>:
+            world<span style="color:#f92672">.</span>session_tokens<span style="color:#f92672">.</span>append(cookie[<span style="color:#e6db74">&#39;value&#39;</span>])
+
+
+<span style="color:#a6e22e">@before</span><span style="color:#f92672">.</span>all
+<span style="color:#66d9ef">def</span> <span style="color:#a6e22e">init</span>():
+    world<span style="color:#f92672">.</span>session_tokens <span style="color:#f92672">=</span> []
+
+
+<span style="color:#a6e22e">@after</span><span style="color:#f92672">.</span>each_example
+<span style="color:#66d9ef">def</span> <span style="color:#a6e22e">teardown_browser</span>(scenario, outline, steps):
+    world<span style="color:#f92672">.</span>session_tokens <span style="color:#f92672">=</span> []
+    world<span style="color:#f92672">.</span>browser<span style="color:#f92672">.</span>delete_all_cookies()
+    world<span style="color:#f92672">.</span>browser<span style="color:#f92672">.</span>quit()
+</code></pre></div><p>Step code is pretty much self-explanatory. A few noteworthy points:</p>
+<ul>
+<li>Step sentences can be defined in 3 different <a href="http://aloe.readthedocs.org/en/latest/steps.html#defining-steps">ways</a> , I chose the function doc.</li>
+<li>The <code>@before.all</code> and <code>@after.all</code> decorators are used to described actions that will execute before and after the scenario execution.</li>
+<li><code>world</code> is an Aloe <a href="http://aloe.readthedocs.org/en/latest/hooks.html#world">object</a> that can be used to store information related to the test process</li>
+<li>After each test a new browser instance is created for more deterministic results (it&rsquo;s a little slower though)</li>
+</ul>
+<p>Test your app by running <code>aloe features/session_management.feature</code>. You can find this and a few other example scenarios <a href="https://github.com/zuBux/aloe-security-features">here</a>.</p>
+<h1 id="usable-output">Usable output</h1>
+<p>Since Aloe is a plugin for <a href="https://nose.readthedocs.org/en/latest/">nose</a>, a Python unit testing framework, <code>aloe</code> accepts the same flags as <a href="https://nose.readthedocs.org/en/latest/genindex.html#Symbols">nosetests</a>. This means that we can use nose&rsquo;s <code>--with-xunit</code> and <code>--xunit-file=&lt;filename&gt;.xml</code> to produce XUnit XML output for our tests, which is parseable by the majority of CI/CD systems (e.g Jenkins).</p>
+<h1 id="final-words">Final Words</h1>
+<p>BDD is a way to convert user stories or requirements, in this case security-related, into automated tests. These and similar tests might help you protect your app against a large number of common XSS payloads <strong>but it won&rsquo;t ensure that your sanitization filters are 100% bulletproof</strong>. However I strongly believe that as a process it provides a clean, reusable and automated way to catch lots of low-hanging fruit while educating your team on secure coding practices.</p>
+
+
+            </div>
+            
+            
+            
+
+            
+            
+
+            
+
+            
         </div>
     </div>
 </div>
+
+
+
 <div class="footer column">
     <div class="container">
 
